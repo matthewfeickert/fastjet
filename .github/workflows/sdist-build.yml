@@ -1,0 +1,50 @@
+name: sdist build
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+    - master
+    - main
+    - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    - name: Install build, check-manifest, and twine
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        python -m pip install build check-manifest twine
+        python -m pip list
+
+    - name: Check MANIFEST
+      run: |
+        check-manifest
+
+    - name: Build a sdist
+      run: |
+        python -m build --sdist --outdir dist/ .
+        ls -lhtra dist/
+
+    - name: Verify the distribution
+      run: twine check dist/*
+
+    - name: Install external dependencies
+      run: |
+        apt update -y
+        apt install -y  libboost-dev gfortran swig
+
+    - name: Build from sdist
+      run: |
+        python -m pip install dist/
