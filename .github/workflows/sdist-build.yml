@@ -33,7 +33,7 @@ jobs:
 
     - name: Build a sdist
       run: |
-        python -m build --sdist --outdir dist/ .
+        python -m build --sdist .
         ls -lhtra dist/
 
     - name: Verify the distribution
@@ -46,7 +46,7 @@ jobs:
 
     - name: Build from sdist
       run: |
-        python -m pip install dist/
+        python -m pip install dist/*.tar.gz
 
     - name: List installed Python libraries
       run: |
