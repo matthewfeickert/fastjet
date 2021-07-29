@@ -41,9 +41,13 @@ jobs:
 
     - name: Install external dependencies
       run: |
-        apt update -y
-        apt install -y  libboost-dev gfortran swig
+        sudo apt update -y
+        sudo apt install -y  libboost-dev gfortran swig
 
     - name: Build from sdist
       run: |
         python -m pip install dist/
+
+    - name: List installed Python libraries
+      run: |
+        python -m pip list
