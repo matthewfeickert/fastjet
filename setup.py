@@ -69,6 +69,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             env = os.environ.copy()
             env["PYTHON"] = sys.executable
             env["PYTHON_INCLUDE"] = f'-I{sysconfig.get_path("include")}'
+            env["CXX"] = env.get("CXX", "g++")
             env["CXXFLAGS"] = "-O3 -Bstatic -lgmp -Bdynamic -std=c++17"
             env["ORIGIN"] = "$ORIGIN"  # if evaluated, it will still be '$ORIGIN'
 
@@ -102,16 +103,10 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             subprocess.run(["make", "install"], cwd=FASTJET, env=env, check=True)
 
             subprocess.run(
-                ["patch", "./.Makefile.inc", DIR / "patch_makefileinc.txt"],
-                cwd=FASTJET_CONTRIB,
-                env=env,
-                check=True,
-            )
-
-            subprocess.run(
                 [
                     "./configure",
                     f"--fastjet-config={FASTJET}/fastjet-config",
+                    f'CXX={env["CXX"]}',
                     "CXXFLAGS=-O3 -Bstatic -Bdynamic -std=c++17",
                 ],
                 cwd=FASTJET_CONTRIB,
