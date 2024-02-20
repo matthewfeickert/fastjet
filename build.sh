@@ -5,19 +5,20 @@ reset_repository () {
 
     cd fastjet-core
     git reset --hard fastjet-3.4.2
-    rm -rf src/ClusterSequence.cc.orig
+    git clean -f
     cd ..
 }
 
 reset_fastjet_contrib () {
     cd fastjet-contrib
-    rm -rf config.log
-    git reset --hard v1.014
+    # git reset --hard v1.014
+    git reset --hard aa1972cd2b3e8aa2c76764f14122e8f728c23712
+    git clean -f
     cd ..
 }
 
 reset_repository
-# reset_fastjet_contrib
+reset_fastjet_contrib
 
 rm -rf build
 python -m pip install --upgrade --verbose .
