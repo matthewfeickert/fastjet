@@ -20,7 +20,11 @@ reset_fastjet_contrib () {
 reset_repository
 reset_fastjet_contrib
 
-rm -rf build
-python -m pip install --upgrade --verbose .
+rm -rf build dist
+
+python -m pip install --upgrade build
+
+python -m build .
+python -m pip install --upgrade --verbose . dist/fastjet-*.whl
 
 reset_repository
