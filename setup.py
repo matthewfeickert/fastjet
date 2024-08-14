@@ -69,6 +69,32 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             env["LDFLAGS"] = env.get("LDFLAGS", "") + f" -Wl,-rpath,{_rpath}"
             env["ORIGIN"] = "$ORIGIN"  # if evaluated, it will still be '$ORIGIN'
 
+            # Use autoreconf to generate configure script to avoid
+            # assumptions in autogen.sh
+            # c.f. https://github.com/scikit-hep/fastjet/issues/300
+            _SISCONE_DIR = FASTJET / "plugins" / "SISCone" / "siscone"
+            try:
+                subprocess.run(
+                    ["autoreconf", "-i"],
+                    cwd=_SISCONE_DIR,
+                    env=env,
+                    check=True,
+                )
+            except Exception:
+                print(f"ERROR: 'autoreconf -i' in directory {_SISCONE_DIR} failed")
+                raise
+
+            try:
+                subprocess.run(
+                    ["autoreconf", "-i"],
+                    cwd=FASTJET,
+                    env=env,
+                    check=True,
+                )
+            except Exception:
+                print(f"ERROR: 'autoreconf -i' in directory {FASTJET} failed")
+                raise
+
             args = [
                 f"--prefix={OUTPUT}",
                 "--enable-thread-safety",
@@ -83,7 +109,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
 
             try:
                 subprocess.run(
-                    ["./autogen.sh"] + args,
+                    ["./configure"] + args,
                     cwd=FASTJET,
                     env=env,
                     check=True,
