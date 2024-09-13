@@ -48,7 +48,7 @@ jobs:
       - name: Install compiler tools on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install make automake swig gmp mpfr boost cgal
+          brew install make automake swig gmp mpfr boost cgal libtool
           export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 
       - name: Install extra deps on Linux
@@ -91,7 +91,7 @@ jobs:
       - name: Install compiler tools on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install make automake swig mpfr boost cgal
+          brew install make automake swig mpfr boost cgal libtool
           export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 
       - name: Clone gmp
