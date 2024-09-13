@@ -57,9 +57,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libboost-dev libcgal-dev libmpfr-dev swig autoconf libtool
 
+      - name: Debug clang
+        run: |
+          clang --version
+          clang++ --version
+          command -v clang
+          echo "CXX: $CXX"
+
       - name: Install package
         run: |
-          echo $PATH
+          echo "PATH: $PATH"
+          export CXX=$(command -v clang++)
+          echo "CXX: $CXX"
           python -m pip install '.[test]' -v
 
       - name: List installed Python packages
