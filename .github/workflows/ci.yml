@@ -64,6 +64,8 @@ jobs:
           command -v clang
           echo "CXX: $CXX"
 
+          env | grep HOMEBREW
+
       - name: Install package
         run: |
           echo "PATH: $PATH"
