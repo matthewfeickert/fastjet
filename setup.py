@@ -85,10 +85,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                         os.environ.get("CXXFLAGS", "")
                         + f" -I{os.environ['CONDA_PREFIX']}/include"
                     )
-                    os.environ["LDFLAGS"] = (
-                        os.environ.get("LDFLAGS", "")
-                        + f" -L{os.environ['CONDA_PREFIX']}/lib"
-                    )
 
             # RPATH is set for shared libraries in the following locations:
             # * fastjet/
@@ -146,10 +142,11 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
+            #
+            # Hm.....this WASN'T NEEDED IN CI!?!?! Only on local build with conda?
+            #
             if sys.platform == "darwin" and platform.processor() == "arm":
                 env["LDFLAGS"] = f"-L{env['HOMEBREW_PREFIX']}/lib"
-                if "CONDA_PREFIX" in env and env["CONDA_PREFIX"]:
-                    env["LDFLAGS"] = env["LDFLAGS"] + f" -L{env['CONDA_PREFIX']}/lib"
 
             # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
             # dependencies to be found. However, fastjet-contrib's configure
