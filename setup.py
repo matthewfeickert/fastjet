@@ -61,7 +61,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             )
 
             # Hack to inject the required CXXFLAGS and LDFLAGS for building
-            # on macOS aarch64 and with Conda.
+            # on macOS aarch64.
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
@@ -82,13 +82,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 # overridden. It is insufficient to just prepend the Homebrew
                 # library path to the existing LDFLAGS.
                 # os.environ["LDFLAGS"] = f"-L{os.environ['HOMEBREW_PREFIX']}/lib"
-                # Pick up a Conda environment if it is active.
-                # Note will still need coreutils and libtool installed with Homebrew.
-                if "CONDA_PREFIX" in os.environ and os.environ["CONDA_PREFIX"]:
-                    os.environ["CXXFLAGS"] = (
-                        os.environ.get("CXXFLAGS", "")
-                        + f" -I{os.environ['CONDA_PREFIX']}/include"
-                    )
 
             # RPATH is set for shared libraries in the following locations:
             # * fastjet/
