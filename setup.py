@@ -102,19 +102,27 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             if sys.platform == "darwin":
                 if "CXXFLAGS" not in os.environ:
                     os.environ["CXXFLAGS"] = ""
-                if "LDFLAGS" not in os.environ:
-                    os.environ["LDFLAGS"] = ""
 
-                os.environ["CXXFLAGS"] = os.environ["CXXFLAGS"] + " -I/opt/homebrew/include"
-                os.environ["LDFLAGS"] = os.environ["LDFLAGS"] + " -L/opt/homebrew/lib"
+                os.environ["CXXFLAGS"] = (
+                    os.environ["CXXFLAGS"] + " -I/opt/homebrew/include"
+                )
+                # For reasons that are unclear, the LDFLAGS need to be fully
+                # overridden. It is insufficient to just prepend the Homebrew
+                # library path to the existing LDFLAGS.
+                os.environ["LDFLAGS"] = "-L/opt/homebrew/lib"
+            # Pick up a Conda environment if it is active
             if "CONDA_PREFIX" in os.environ and os.environ["CONDA_PREFIX"]:
                 if "CXXFLAGS" not in os.environ:
                     os.environ["CXXFLAGS"] = ""
                 if "LDFLAGS" not in os.environ:
                     os.environ["LDFLAGS"] = ""
 
-                os.environ["CXXFLAGS"] = os.environ["CXXFLAGS"] + f" -I{os.environ['CONDA_PREFIX']}/include"
-                os.environ["LDFLAGS"] = os.environ["LDFLAGS"] + f" -L{os.environ['CONDA_PREFIX']}/lib"
+                os.environ["CXXFLAGS"] = (
+                    os.environ["CXXFLAGS"] + f" -I{os.environ['CONDA_PREFIX']}/include"
+                )
+                os.environ["LDFLAGS"] = (
+                    os.environ["LDFLAGS"] + f" -L{os.environ['CONDA_PREFIX']}/lib"
+                )
 
             env = os.environ.copy()
             env["CXX"] = env.get("CXX", "g++")
