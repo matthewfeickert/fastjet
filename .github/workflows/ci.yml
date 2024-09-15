@@ -78,8 +78,8 @@ jobs:
           export CXX=$(command -v clang++)
           echo "CXX: $CXX"
 
-          export CPPFLAGS="-I$(brew --prefix cgal)/include -I$(brew --prefix gmp)/include -I$(brew --prefix boost)/include"
-          export LDFLAGS="-L$(brew --prefix gmp)/lib"
+          export CPPFLAGS="-I$(brew --prefix)/include"
+          export LDFLAGS="-L$(brew --prefix)/lib"
 
           python -m pip install '.[test]' -v
 
