@@ -72,12 +72,12 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 and "CONDA_PREFIX" not in os.environ
             ):
                 os.environ["CXXFLAGS"] = (
-                    f"-I{os.environ['HOMEBREW_PREFIX']}/include "
-                    + os.environ.get("CXXFLAGS", "")
+                    os.environ.get("CXXFLAGS", "")
+                    + f" -I{os.environ['HOMEBREW_PREFIX']}/include"
                 )
                 os.environ["LDFLAGS"] = (
-                    f"-L{os.environ['HOMEBREW_PREFIX']}/lib "
-                    + os.environ.get("LDFLAGS", "")
+                    os.environ.get("LDFLAGS", "")
+                    + f" -L{os.environ['HOMEBREW_PREFIX']}/lib"
                 )
 
             # RPATH is set for shared libraries in the following locations:
