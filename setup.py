@@ -78,7 +78,8 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 # overridden. It is insufficient to just prepend the Homebrew
                 # library path to the existing LDFLAGS.
                 # os.environ["LDFLAGS"] = f"-L{os.environ['HOMEBREW_PREFIX']}/lib"
-            # Pick up a Conda environment if it is active
+            # Pick up a Conda environment if it is active.
+            # Note will still need coreutils and libtool installed with Homebrew.
             if "CONDA_PREFIX" in os.environ and os.environ["CONDA_PREFIX"]:
                 os.environ["CXXFLAGS"] = (
                     os.environ.get("CXXFLAGS", "")
@@ -135,19 +136,23 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             env["CXX"] = env.get("CXX", "g++")
             env["LDFLAGS"] = env.get("LDFLAGS", "")
 
-            # Hack to inject the required CXXFLAGS and LDFLAGS for building
-            # on macOS aarch64 and with Conda.
-            # This is a bad hack, and will be alleviated if CMake can be used
-            # by FastJet and FastJet-contrib.
-            # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            if sys.platform == "darwin" and platform.processor() == "arm":
-                # For reasons that are unclear, the LDFLAGS need to be fully
-                # overridden. It is insufficient to just prepend the Homebrew
-                # library path to the existing LDFLAGS.
-                env["LDFLAGS"] = f"-L{env['HOMEBREW_PREFIX']}/lib"
-            # Pick up a Conda environment if it is active
-            if "CONDA_PREFIX" in env and env["CONDA_PREFIX"]:
-                env["LDFLAGS"] = env["LDFLAGS"] + f" -L{env['CONDA_PREFIX']}/lib"
+            # # Hack to inject the required CXXFLAGS and LDFLAGS for building
+            # # on macOS aarch64 and with Conda.
+            # # This is a bad hack, and will be alleviated if CMake can be used
+            # # by FastJet and FastJet-contrib.
+            # # c.f. https://github.com/scikit-hep/fastjet/issues/310
+            # if sys.platform == "darwin" and platform.processor() == "arm":
+            #     # For reasons that are unclear, the LDFLAGS need to be fully
+            #     # overridden. It is insufficient to just prepend the Homebrew
+            #     # library path to the existing LDFLAGS.
+            #     # env["LDFLAGS"] = f"-L{env['HOMEBREW_PREFIX']}/lib"
+            #     env["LDFLAGS"] = (
+            #         f"-L{env['HOMEBREW_PREFIX']}/lib "
+            #         + env.get("LDFLAGS", "")
+            #     )
+            # # Pick up a Conda environment if it is active
+            # if "CONDA_PREFIX" in env and env["CONDA_PREFIX"]:
+            #     env["LDFLAGS"] = env["LDFLAGS"] + f" -L{env['CONDA_PREFIX']}/lib"
 
             # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
             # dependencies to be found. However, fastjet-contrib's configure
