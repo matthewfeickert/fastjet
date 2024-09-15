@@ -70,14 +70,14 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                     f"-I{os.environ['HOMEBREW_PREFIX']}/include "
                     + os.environ.get("CXXFLAGS", "")
                 )
-                # os.environ["LDFLAGS"] = (
-                #     os.environ.get("LDFLAGS", "")
-                #     + f" -L{os.environ['HOMEBREW_PREFIX']}/lib"
-                # )
+                os.environ["LDFLAGS"] = (
+                    f"-L{os.environ['HOMEBREW_PREFIX']}/lib "
+                    + os.environ.get("LDFLAGS", "")
+                )
                 # For reasons that are unclear, the LDFLAGS need to be fully
                 # overridden. It is insufficient to just prepend the Homebrew
                 # library path to the existing LDFLAGS.
-                os.environ["LDFLAGS"] = f"-L{os.environ['HOMEBREW_PREFIX']}/lib"
+                # os.environ["LDFLAGS"] = f"-L{os.environ['HOMEBREW_PREFIX']}/lib"
             # Pick up a Conda environment if it is active
             if "CONDA_PREFIX" in os.environ and os.environ["CONDA_PREFIX"]:
                 os.environ["CXXFLAGS"] = (
