@@ -69,6 +69,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 sys.platform == "darwin"
                 and platform.processor() == "arm"
                 and "HOMEBREW_PREFIX" in os.environ
+                and "CONDA_PREFIX" not in os.environ
             ):
                 os.environ["CXXFLAGS"] = (
                     f"-I{os.environ['HOMEBREW_PREFIX']}/include "
@@ -78,10 +79,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                     f"-L{os.environ['HOMEBREW_PREFIX']}/lib "
                     + os.environ.get("LDFLAGS", "")
                 )
-                # For reasons that are unclear, the LDFLAGS need to be fully
-                # overridden. It is insufficient to just prepend the Homebrew
-                # library path to the existing LDFLAGS.
-                # os.environ["LDFLAGS"] = f"-L{os.environ['HOMEBREW_PREFIX']}/lib"
 
             # RPATH is set for shared libraries in the following locations:
             # * fastjet/
@@ -128,26 +125,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             env = os.environ.copy()
             env["CXX"] = env.get("CXX", "g++")
             env["LDFLAGS"] = env.get("LDFLAGS", "")
-
-            # Hack to inject the required CXXFLAGS and LDFLAGS for building
-            # on macOS aarch64 and with Conda.
-            # For reasons that are unclear, the LDFLAGS need to be fully
-            # overridden. It is insufficient to just prepend the Homebrew
-            # library path to the existing LDFLAGS.
-            # Things will _build_ without this, but then at runtime there
-            # will be 'symbol not found in flat namespace' errors.
-            # This is a bad hack, and will be alleviated if CMake can be used
-            # by FastJet and FastJet-contrib.
-            # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            #
-            # Hm.....this WASN'T NEEDED IN CI!?!?! Only on local build with conda?
-            #
-            if (
-                sys.platform == "darwin"
-                and platform.processor() == "arm"
-                and "HOMEBREW_PREFIX" in os.environ
-            ):
-                env["LDFLAGS"] = f"-L{env['HOMEBREW_PREFIX']}/lib"
 
             # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
             # dependencies to be found. However, fastjet-contrib's configure
