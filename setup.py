@@ -94,6 +94,28 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 subprocess.run(["cat", "config.log"], cwd=FASTJET, check=True)
                 raise
 
+            # Hack to inject the required CXXFLAGS and LDFLAGS for building
+            # on macOS aarch64 and with Conda.
+            # This is a bad hack, and will be alleviated if CMake can be used
+            # by FastJet and FastJet-contrib.
+            # c.f. https://github.com/scikit-hep/fastjet/issues/310
+            if sys.platform == "darwin":
+                if "CXXFLAGS" not in os.environ:
+                    os.environ["CXXFLAGS"] = ""
+                if "LDFLAGS" not in os.environ:
+                    os.environ["LDFLAGS"] = ""
+
+                os.environ["CXXFLAGS"] = os.environ["CXXFLAGS"] + " -I/opt/homebrew/include"
+                os.environ["LDFLAGS"] = os.environ["LDFLAGS"] + " -L/opt/homebrew/lib"
+            if "CONDA_PREFIX" in os.environ and os.environ["CONDA_PREFIX"]:
+                if "CXXFLAGS" not in os.environ:
+                    os.environ["CXXFLAGS"] = ""
+                if "LDFLAGS" not in os.environ:
+                    os.environ["LDFLAGS"] = ""
+
+                os.environ["CXXFLAGS"] = os.environ["CXXFLAGS"] + f" -I{os.environ['CONDA_PREFIX']}/include"
+                os.environ["LDFLAGS"] = os.environ["LDFLAGS"] + f" -L{os.environ['CONDA_PREFIX']}/lib"
+
             env = os.environ.copy()
             env["CXX"] = env.get("CXX", "g++")
             env["LDFLAGS"] = env.get("LDFLAGS", "")
