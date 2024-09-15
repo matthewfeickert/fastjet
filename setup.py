@@ -11,6 +11,7 @@ from pybind11.setup_helpers import Pybind11Extension  # isort:skip
 
 import os
 import pathlib
+import platform
 import shutil
 import subprocess
 import sys
@@ -64,7 +65,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            if sys.platform == "darwin":
+            if sys.platform == "darwin" and platform.processor() == "arm":
                 os.environ["CXXFLAGS"] = (
                     f"-I{os.environ['HOMEBREW_PREFIX']}/include "
                     + os.environ.get("CXXFLAGS", "")
@@ -137,7 +138,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            if sys.platform == "darwin":
+            if sys.platform == "darwin" and platform.processor() == "arm":
                 # For reasons that are unclear, the LDFLAGS need to be fully
                 # overridden. It is insufficient to just prepend the Homebrew
                 # library path to the existing LDFLAGS.
