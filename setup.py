@@ -65,7 +65,11 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            if sys.platform == "darwin" and platform.processor() == "arm":
+            if (
+                sys.platform == "darwin"
+                and platform.processor() == "arm"
+                and "HOMEBREW_PREFIX" in os.environ
+            ):
                 os.environ["CXXFLAGS"] = (
                     f"-I{os.environ['HOMEBREW_PREFIX']}/include "
                     + os.environ.get("CXXFLAGS", "")
@@ -145,7 +149,11 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             #
             # Hm.....this WASN'T NEEDED IN CI!?!?! Only on local build with conda?
             #
-            if sys.platform == "darwin" and platform.processor() == "arm":
+            if (
+                sys.platform == "darwin"
+                and platform.processor() == "arm"
+                and "HOMEBREW_PREFIX" in os.environ
+            ):
                 env["LDFLAGS"] = f"-L{env['HOMEBREW_PREFIX']}/lib"
 
             # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
