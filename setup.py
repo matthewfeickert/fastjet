@@ -101,12 +101,20 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             subprocess.run(["make", "-j"], cwd=FASTJET, env=env, check=True)
             subprocess.run(["make", "install"], cwd=FASTJET, env=env, check=True)
 
+            # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
+            # dependencies to be found. However, fastjet-contrib's configure
+            # script does not use/accept LDFLAGS as an argument, and so to get
+            # the library search path options passed to the linker it is necessary
+            # to improperly inject them into the CXXFLAGS (which are used).
+            # This is a bad hack, and will be alleviated if CMake can be used
+            # by FastJet and FastJet-contrib.
+            # c.f. https://github.com/scikit-hep/fastjet/issues/310
             subprocess.run(
                 [
                     "./configure",
                     f"--fastjet-config={FASTJET}/fastjet-config",
                     f'CXX={env["CXX"]}',
-                    f'CXXFLAGS=-O3 -Bstatic -Bdynamic -std=c++17 {env["LDFLAGS"]}',
+                    f'CXXFLAGS=-O3 -Bstatic -Bdynamic -std=c++17{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
                 ],
                 cwd=FASTJET_CONTRIB,
                 env=env,
@@ -135,10 +143,7 @@ class FastJetInstall(setuptools.command.install.install):
 
         shutil.copytree(OUTPUT, fastjetdir / "_fastjet_core", symlinks=True)
 
-        make = "make"
-        if sys.platform == "darwin":
-            make = "gmake"
-
+        make = "gmake" if sys.platform == "darwin" else "make"
         pythondir = pathlib.Path(
             subprocess.check_output(
                 f"""{make} -f Makefile --eval='print-pythondir:
