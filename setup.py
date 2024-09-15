@@ -65,8 +65,8 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
             if sys.platform == "darwin":
-                os.environ["CXXFLAGS"] = (
-                    os.environ.get("CXXFLAGS", "") + " -I/opt/homebrew/include"
+                os.environ["CXXFLAGS"] = "-I/opt/homebrew/include " + os.environ.get(
+                    "CXXFLAGS", ""
                 )
                 os.environ["LDFLAGS"] = (
                     os.environ.get("LDFLAGS", "") + " -L/opt/homebrew/lib"
