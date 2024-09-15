@@ -47,7 +47,12 @@ jobs:
 
       - name: Install compiler tools on macOS
         if: runner.os == 'macOS'
+        shell: bash
         run: |
+          if [ ! -z "${HOMEBREW_CELLAR}" ]; then
+            # HOMEBREW_CELLAR set for macos-14 but not macos-13
+            ln -s "${HOMEBREW_CELLAR}" /usr/local/Cellar
+          fi
           brew install make automake swig gmp mpfr boost cgal libtool
           export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 
@@ -65,6 +70,8 @@ jobs:
           echo "CXX: $CXX"
 
           env | grep HOMEBREW
+
+          ls -lhtra /usr/local/Cellar
 
       - name: Install package
         run: |
