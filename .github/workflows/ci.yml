@@ -78,9 +78,6 @@ jobs:
           export CXX=$(command -v clang++)
           echo "CXX: $CXX"
 
-          export CPPFLAGS="-I$(brew --prefix)/include"
-          export LDFLAGS="-L$(brew --prefix)/lib"
-
           python -m pip install '.[test]' -v
 
       - name: List installed Python packages
@@ -143,7 +140,6 @@ jobs:
           CIBW_ARCHS: ${{ matrix.arch }}
           CIBW_BUILD: cp${{ matrix.python }}-*
           CIBW_BUILD_VERBOSITY: 2
-          CIBW_ENVIRONMENT: CPPFLAGS='-I/opt/homebrew/include' LDFLAGS='-L/opt/homebrew/lib'
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
