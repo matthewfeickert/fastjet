@@ -49,12 +49,7 @@ jobs:
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          if [ ! -z "${HOMEBREW_CELLAR}" ]; then
-            # HOMEBREW_CELLAR set for macos-14 but not macos-13
-            ln -s "${HOMEBREW_CELLAR}" /usr/local/Cellar
-          fi
           brew install make automake swig gmp mpfr boost cgal libtool
-          export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
 
       - name: Install extra deps on Linux
         if: runner.os == 'Linux'
@@ -71,10 +66,14 @@ jobs:
 
           env | grep HOMEBREW
 
-          ls -lhtra /usr/local/Cellar
+          brew shellenv
+          eval $(brew shellenv)
+
+          env | grep HOMEBREW
 
       - name: Install package
         run: |
+          eval $(brew shellenv)
           echo "PATH: $PATH"
           export CXX=$(command -v clang++)
           echo "CXX: $CXX"
