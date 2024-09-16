@@ -91,9 +91,10 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             env["PYTHON"] = sys.executable
             env["PYTHON_INCLUDE"] = f'-I{sysconfig.get_path("include")}'
             env["CXX"] = env.get("CXX", "g++")
-            env["CXXFLAGS"] = "-O3 -Bstatic -Bdynamic -std=c++17 " + env.get(
-                "CXXFLAGS", ""
-            )
+            # env["CXXFLAGS"] = "-O3 -Bstatic -Bdynamic -std=c++17 " + env.get(
+            #     "CXXFLAGS", ""
+            # )
+            env["CXXFLAGS"] = "-O3 -Bstatic -Bdynamic -std=c++17"
             env["LDFLAGS"] = env.get("LDFLAGS", "") + f" -Wl,-rpath,{_rpath}"
             env["ORIGIN"] = "$ORIGIN"  # if evaluated, it will still be '$ORIGIN'
 
@@ -131,12 +132,14 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # This is a bad hack, and will be alleviated if CMake can be used
             # by FastJet and FastJet-contrib.
             # c.f. https://github.com/scikit-hep/fastjet/issues/310
+            env["LDFLAGS"] = os.environ.get("LDFLAGS", "")
             subprocess.run(
                 [
                     "./configure",
                     f"--fastjet-config={FASTJET}/fastjet-config",
                     f'CXX={env["CXX"]}',
-                    f'CXXFLAGS={env["CXXFLAGS"]}{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
+                    # f'CXXFLAGS={env["CXXFLAGS"]}{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
+                    f'CXXFLAGS={env["CXXFLAGS"] + " " + env["LDFLAGS"]}',
                 ],
                 cwd=FASTJET_CONTRIB,
                 env=env,
