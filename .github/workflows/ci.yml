@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.12"]
-        runs-on: [ubuntu-latest, macos-13]
+        runs-on: [ubuntu-latest, macos-13, macos-latest]
         arch: [auto64]
     steps:
       - uses: actions/checkout@v4
@@ -48,8 +48,7 @@ jobs:
       - name: Install compiler tools on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install make automake swig gmp mpfr boost cgal
-          export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
+          brew install make automake swig gmp mpfr boost cgal libtool
 
       - name: Install extra deps on Linux
         if: runner.os == 'Linux'
@@ -59,7 +58,6 @@ jobs:
 
       - name: Install package
         run: |
-          echo $PATH
           python -m pip install '.[test]' -v
 
       - name: List installed Python packages
@@ -74,7 +72,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-13]
+        os: [ubuntu-latest, macos-13, macos-latest]
         python: [312]
         arch: [auto64]
 
@@ -91,8 +89,7 @@ jobs:
       - name: Install compiler tools on macOS
         if: runner.os == 'macOS'
         run: |
-          brew install make automake swig mpfr boost cgal
-          export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"
+          brew install make automake swig mpfr boost cgal libtool
 
       - name: Clone gmp
         if: runner.os == 'macOS'
