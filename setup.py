@@ -124,6 +124,9 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
             # Update the environment for fastjet-contrib build
             env = os.environ.copy()
             env["CXX"] = env.get("CXX", "g++")
+            env["CXXFLAGS"] = "-O3 -Bstatic -Bdynamic -std=c++17 " + env.get(
+                "CXXFLAGS", ""
+            )
             env["LDFLAGS"] = env.get("LDFLAGS", "")
 
             # For aarch64 macOS need to set the LDFLAGS for Homebrew installed
@@ -139,7 +142,8 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                     "./configure",
                     f"--fastjet-config={FASTJET}/fastjet-config",
                     f'CXX={env["CXX"]}',
-                    f'CXXFLAGS=-O3 -Bstatic -Bdynamic -std=c++17{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
+                    # f'CXXFLAGS=-O3 -Bstatic -Bdynamic -std=c++17{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
+                    f'CXXFLAGS={env["CXXFLAGS"]}',
                 ],
                 cwd=FASTJET_CONTRIB,
                 env=env,
