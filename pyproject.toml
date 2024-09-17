@@ -17,11 +17,11 @@ manylinux-i686-image = "manylinux2014"
 before-all = [
     "yum update -y",
     "yum install -y mpfr-devel",
-    "curl -LO https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2",
-    "tar --bzip2 -xf boost_1_84_0.tar.bz2",
-    "mv boost_1_84_0/boost /usr/include/boost",
-    "curl -LO https://github.com/CGAL/cgal/releases/download/v5.6.1/CGAL-5.6.1-library.zip",
-    "unzip -q CGAL-5.6.1-library.zip",
+    "curl -LO https://github.com/boostorg/boost/releases/download/boost-1.86.0/boost-1.86.0-b2-nodocs.tar.xz",
+    "tar -xf boost-1.86.0-b2-nodocs.tar.xz",
+    "mv boost-1.86.0/boost /usr/include/",
+    "curl -LO https://github.com/CGAL/cgal/releases/download/v5.6.1/CGAL-5.6.1-library.tar.xz",
+    "tar -xf CGAL-5.6.1-library.tar.xz",
     "mv CGAL-5.6.1/include/CGAL /usr/include/",
 ]
 # Skip musllinux builds for the moment
