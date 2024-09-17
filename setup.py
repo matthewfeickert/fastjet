@@ -11,7 +11,6 @@ from pybind11.setup_helpers import Pybind11Extension  # isort:skip
 
 import os
 import pathlib
-import platform
 import shutil
 import subprocess
 import sys
@@ -59,28 +58,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 ["patch", "src/ClusterSequence.cc", DIR / "patch_clustersequence.txt"],
                 cwd=FASTJET,
             )
-
-            # Inject the required CXXFLAGS and LDFLAGS for building on
-            # aarch64 macOS. As Homebrew can not be used at any part in a
-            # conda-forge build, guard against this by checking for the
-            # conda-build environment variable.
-            # This is a bad hack, and will be alleviated if CMake can be used
-            # by FastJet and FastJet-contrib.
-            # c.f. https://github.com/scikit-hep/fastjet/issues/310
-            if (
-                sys.platform == "darwin"
-                and platform.processor() == "arm"
-                and "HOMEBREW_PREFIX" in os.environ
-                and "CONDA_BUILD" not in os.environ
-            ):
-                os.environ["CXXFLAGS"] = (
-                    os.environ.get("CXXFLAGS", "")
-                    + f" -I{os.environ['HOMEBREW_PREFIX']}/include"
-                )
-                os.environ["LDFLAGS"] = (
-                    os.environ.get("LDFLAGS", "")
-                    + f" -L{os.environ['HOMEBREW_PREFIX']}/lib"
-                )
 
             # RPATH is set for shared libraries in the following locations:
             # * fastjet/
