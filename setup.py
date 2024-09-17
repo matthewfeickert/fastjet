@@ -90,7 +90,6 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                 "--enable-thread-safety",
                 "--disable-auto-ptr",
                 "--enable-allcxxplugins",
-                "--enable-cgal-header-only",
                 "--enable-cgal",
                 f"--with-cgaldir={cgal_dir}",
                 "--enable-swig",
