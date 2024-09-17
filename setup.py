@@ -138,7 +138,7 @@ class FastJetBuild(setuptools.command.build_ext.build_ext):
                     f"--fastjet-config={FASTJET}/fastjet-config",
                     f'CXX={env["CXX"]}',
                     # f'CXXFLAGS={env["CXXFLAGS"]}{" "+env["LDFLAGS"] if sys.platform == "darwin" else ""}',
-                    f'CXXFLAGS={env["CXXFLAGS"] + " " + env["LDFLAGS"]}',
+                    f'CXXFLAGS={env["CXXFLAGS"]}',
                 ],
                 cwd=FASTJET_CONTRIB,
                 env=env,
